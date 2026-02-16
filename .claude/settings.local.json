@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node --version:*)",
+      "Bash(npm:*)",
+      "Bash(git --version:*)",
+      "Bash(command -v:*)",
+      "Bash(export:*)",
+      "Bash([ -s \"$NVM_DIR/nvm.sh\" ])",
+      "Bash(source:*)",
+      "Bash(nvm ls:*)",
+      "WebFetch(domain:www.npmjs.com)"
+    ]
+  }
+}

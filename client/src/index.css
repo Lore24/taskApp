@@ -1,0 +1,126 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f8fafc;
+  --color-bg-tertiary: #f1f5f9;
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-tertiary: #94a3b8;
+  --color-border: #e2e8f0;
+  --color-surface: #ffffff;
+}
+
+.dark {
+  --color-bg-primary: #0F172A;
+  --color-bg-secondary: #1E293B;
+  --color-bg-tertiary: #334155;
+  --color-text-primary: #F1F5F9;
+  --color-text-secondary: #94A3B8;
+  --color-text-tertiary: #64748B;
+  --color-border: #334155;
+  --color-surface: #1E293B;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* Scrollbar styling for dark mode */
+.dark ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: var(--color-bg-primary);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: var(--color-bg-tertiary);
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* FullCalendar dark mode overrides */
+.dark .fc {
+  --fc-border-color: var(--color-border);
+  --fc-page-bg-color: var(--color-bg-primary);
+  --fc-neutral-bg-color: var(--color-bg-secondary);
+  --fc-list-event-hover-bg-color: var(--color-bg-tertiary);
+  --fc-today-bg-color: rgba(139, 92, 246, 0.08);
+  --fc-button-bg-color: var(--color-bg-tertiary);
+  --fc-button-border-color: var(--color-border);
+  --fc-button-hover-bg-color: #475569;
+  --fc-button-hover-border-color: #475569;
+  --fc-button-active-bg-color: #8B5CF6;
+  --fc-button-active-border-color: #8B5CF6;
+}
+
+.dark .fc .fc-col-header-cell {
+  background-color: var(--color-bg-secondary);
+}
+
+.dark .fc .fc-daygrid-day-number,
+.dark .fc .fc-col-header-cell-cushion {
+  color: var(--color-text-primary);
+}
+
+.dark .fc .fc-toolbar-title {
+  color: var(--color-text-primary);
+}
+
+.dark .fc .fc-day-other .fc-daygrid-day-number {
+  color: var(--color-text-tertiary);
+}
+
+/* Markdown editor dark mode */
+.dark .w-md-editor {
+  background-color: var(--color-bg-secondary) !important;
+  color: var(--color-text-primary) !important;
+  border-color: var(--color-border) !important;
+}
+
+.dark .w-md-editor-toolbar {
+  background-color: var(--color-bg-tertiary) !important;
+  border-color: var(--color-border) !important;
+}
+
+.dark .w-md-editor-toolbar li > button {
+  color: var(--color-text-secondary) !important;
+}
+
+.dark .w-md-editor-text-pre > code,
+.dark .w-md-editor-text-input {
+  color: var(--color-text-primary) !important;
+}
+
+.dark .wmde-markdown {
+  background-color: var(--color-bg-secondary) !important;
+  color: var(--color-text-primary) !important;
+}
+
+/* Smooth transitions */
+.transition-theme {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
