@@ -8,7 +8,7 @@ import SubtaskList from './SubtaskList';
 import StatusBadge from '../shared/StatusBadge';
 import ConfirmDialog from '../shared/ConfirmDialog';
 import { STATUSES, STATUS_LABELS, ASSIGNEES } from '../../utils/constants';
-import { toInputDatetime, fromInputDatetime } from '../../utils/dateHelpers';
+import { toInputDatetime, toInputDate, fromInputDatetime, fromInputDate, hasTime } from '../../utils/dateHelpers';
 
 export default function TaskDetailPanel() {
   const { selectedTaskId, taskPanelOpen, closeTaskPanel } = useUIStore();
@@ -23,6 +23,8 @@ export default function TaskDetailPanel() {
   const [dueDate, setDueDate] = useState('');
   const [showDelete, setShowDelete] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [startHasTime, setStartHasTime] = useState(false);
+  const [dueHasTime, setDueHasTime] = useState(false);
 
   const task = selectedTaskId ? getTask(selectedTaskId) : null;
   const project = task ? getProject(task.projectId) : null;
@@ -33,8 +35,12 @@ export default function TaskDetailPanel() {
       setNotes(task.notes || '');
       setStatus(task.status);
       setAssignee(task.assignee || 'Lauren');
-      setStartDate(toInputDatetime(task.startDate));
-      setDueDate(toInputDatetime(task.dueDate));
+      const sTime = hasTime(task.startDate);
+      const dTime = hasTime(task.dueDate);
+      setStartHasTime(sTime);
+      setDueHasTime(dTime);
+      setStartDate(sTime ? toInputDatetime(task.startDate) : toInputDate(task.startDate));
+      setDueDate(dTime ? toInputDatetime(task.dueDate) : toInputDate(task.dueDate));
       fetchSubtasks(task.id);
     }
   }, [task?.id, task?.updatedAt]);
@@ -175,29 +181,89 @@ export default function TaskDetailPanel() {
             {/* Dates */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="flex items-center gap-1.5 text-xs font-medium text-content-tertiary mb-1.5">
-                  <Clock size={12} /> Start
-                </label>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="flex items-center gap-1.5 text-xs font-medium text-content-tertiary">
+                    <Clock size={12} /> Start
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newHasTime = !startHasTime;
+                      setStartHasTime(newHasTime);
+                      if (!newHasTime && startDate) {
+                        // Switching to date-only: strip time
+                        const dateOnly = startDate.slice(0, 10);
+                        setStartDate(dateOnly);
+                        saveField('startDate', fromInputDate(dateOnly));
+                      } else if (newHasTime && startDate) {
+                        // Switching to datetime: add default time
+                        const dt = startDate + 'T09:00';
+                        setStartDate(dt);
+                        saveField('startDate', fromInputDatetime(dt));
+                      }
+                    }}
+                    className={`text-[10px] font-medium px-1.5 py-0.5 rounded transition-colors ${
+                      startHasTime
+                        ? 'text-accent-violet bg-accent-violet/10'
+                        : 'text-content-tertiary hover:text-content-secondary'
+                    }`}
+                  >
+                    {startHasTime ? 'Has time' : '+ Time'}
+                  </button>
+                </div>
                 <input
-                  type="datetime-local"
+                  type={startHasTime ? 'datetime-local' : 'date'}
                   value={startDate}
                   onChange={(e) => {
                     setStartDate(e.target.value);
-                    saveField('startDate', fromInputDatetime(e.target.value));
+                    if (startHasTime) {
+                      saveField('startDate', fromInputDatetime(e.target.value));
+                    } else {
+                      saveField('startDate', fromInputDate(e.target.value));
+                    }
                   }}
                   className="w-full px-3 py-2 bg-surface-tertiary border border-border rounded-lg text-content-primary text-sm focus:outline-none focus:ring-2 focus:ring-accent-violet/50 transition-colors"
                 />
               </div>
               <div>
-                <label className="flex items-center gap-1.5 text-xs font-medium text-content-tertiary mb-1.5">
-                  <Calendar size={12} /> Due
-                </label>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="flex items-center gap-1.5 text-xs font-medium text-content-tertiary">
+                    <Calendar size={12} /> Due
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newHasTime = !dueHasTime;
+                      setDueHasTime(newHasTime);
+                      if (!newHasTime && dueDate) {
+                        const dateOnly = dueDate.slice(0, 10);
+                        setDueDate(dateOnly);
+                        saveField('dueDate', fromInputDate(dateOnly));
+                      } else if (newHasTime && dueDate) {
+                        const dt = dueDate + 'T17:00';
+                        setDueDate(dt);
+                        saveField('dueDate', fromInputDatetime(dt));
+                      }
+                    }}
+                    className={`text-[10px] font-medium px-1.5 py-0.5 rounded transition-colors ${
+                      dueHasTime
+                        ? 'text-accent-violet bg-accent-violet/10'
+                        : 'text-content-tertiary hover:text-content-secondary'
+                    }`}
+                  >
+                    {dueHasTime ? 'Has time' : '+ Time'}
+                  </button>
+                </div>
                 <input
-                  type="datetime-local"
+                  type={dueHasTime ? 'datetime-local' : 'date'}
                   value={dueDate}
                   onChange={(e) => {
                     setDueDate(e.target.value);
-                    saveField('dueDate', fromInputDatetime(e.target.value));
+                    if (dueHasTime) {
+                      saveField('dueDate', fromInputDatetime(e.target.value));
+                    } else {
+                      saveField('dueDate', fromInputDate(e.target.value));
+                    }
                   }}
                   className="w-full px-3 py-2 bg-surface-tertiary border border-border rounded-lg text-content-primary text-sm focus:outline-none focus:ring-2 focus:ring-accent-violet/50 transition-colors"
                 />

@@ -26,11 +26,11 @@
       "notes": "",
       "status": "todo",
       "assignee": "Lauren",
-      "startDate": "2026-02-16T20:00:00.000Z",
-      "dueDate": "2026-02-21T19:01:00.000Z",
+      "startDate": "2026-02-20",
+      "dueDate": "2026-02-25",
       "order": 0,
       "createdAt": "2026-02-15T16:00:27.564Z",
-      "updatedAt": "2026-02-16T02:05:40.955Z"
+      "updatedAt": "2026-02-16T02:25:54.621Z"
     },
     {
       "id": "task_a5fa34ba",
@@ -39,11 +39,11 @@
       "notes": "",
       "status": "todo",
       "assignee": "Lauren",
-      "startDate": "2026-02-16T20:14:00.000Z",
-      "dueDate": "2026-02-26T20:50:00.000Z",
+      "startDate": "2026-02-16",
+      "dueDate": "2026-02-26",
       "order": 1,
       "createdAt": "2026-02-15T20:12:01.529Z",
-      "updatedAt": "2026-02-15T20:16:19.714Z"
+      "updatedAt": "2026-02-16T02:28:24.428Z"
     }
   ],
   "subtasks": [
@@ -84,7 +84,7 @@
       "dueDate": "2026-02-16T20:16:00.000Z",
       "order": 0,
       "createdAt": "2026-02-15T20:15:02.035Z",
-      "updatedAt": "2026-02-15T20:16:30.137Z"
+      "updatedAt": "2026-02-16T02:28:40.147Z"
     },
     {
       "id": "sub_409dc18a",

@@ -3,7 +3,7 @@ import { CheckCircle2, Circle, Trash2, ChevronDown, ChevronUp } from 'lucide-rea
 import useTaskStore from '../../stores/useTaskStore';
 import AssigneeBadge from '../shared/AssigneeBadge';
 import { ASSIGNEES } from '../../utils/constants';
-import { toInputDatetime, fromInputDatetime } from '../../utils/dateHelpers';
+import { toInputDatetime, toInputDate, fromInputDatetime, fromInputDate, hasTime } from '../../utils/dateHelpers';
 
 export default function SubtaskItem({ subtask }) {
   const { patchSubtask, deleteSubtask } = useTaskStore();
@@ -11,9 +11,15 @@ export default function SubtaskItem({ subtask }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const [editTitle, setEditTitle] = useState(subtask.title);
-  const [editStartDate, setEditStartDate] = useState(toInputDatetime(subtask.startDate));
-  const [editDueDate, setEditDueDate] = useState(toInputDatetime(subtask.dueDate));
+  const [editStartDate, setEditStartDate] = useState(
+    hasTime(subtask.startDate) ? toInputDatetime(subtask.startDate) : toInputDate(subtask.startDate)
+  );
+  const [editDueDate, setEditDueDate] = useState(
+    hasTime(subtask.dueDate) ? toInputDatetime(subtask.dueDate) : toInputDate(subtask.dueDate)
+  );
   const [editAssignee, setEditAssignee] = useState(subtask.assignee || 'Lauren');
+  const [startTimeOn, setStartTimeOn] = useState(hasTime(subtask.startDate));
+  const [dueTimeOn, setDueTimeOn] = useState(hasTime(subtask.dueDate));
 
   const toggleStatus = (e) => {
     e.stopPropagation();
@@ -22,9 +28,13 @@ export default function SubtaskItem({ subtask }) {
 
   const handleExpand = () => {
     if (!isExpanded) {
+      const sTime = hasTime(subtask.startDate);
+      const dTime = hasTime(subtask.dueDate);
       setEditTitle(subtask.title);
-      setEditStartDate(toInputDatetime(subtask.startDate));
-      setEditDueDate(toInputDatetime(subtask.dueDate));
+      setStartTimeOn(sTime);
+      setDueTimeOn(dTime);
+      setEditStartDate(sTime ? toInputDatetime(subtask.startDate) : toInputDate(subtask.startDate));
+      setEditDueDate(dTime ? toInputDatetime(subtask.dueDate) : toInputDate(subtask.dueDate));
       setEditAssignee(subtask.assignee || 'Lauren');
     }
     setIsExpanded(!isExpanded);
@@ -33,8 +43,8 @@ export default function SubtaskItem({ subtask }) {
   const handleSave = () => {
     patchSubtask(subtask.id, {
       title: editTitle.trim() || subtask.title,
-      startDate: fromInputDatetime(editStartDate),
-      dueDate: fromInputDatetime(editDueDate),
+      startDate: startTimeOn ? fromInputDatetime(editStartDate) : fromInputDate(editStartDate),
+      dueDate: dueTimeOn ? fromInputDatetime(editDueDate) : fromInputDate(editDueDate),
       assignee: editAssignee,
     });
     setIsExpanded(false);
@@ -88,18 +98,60 @@ export default function SubtaskItem({ subtask }) {
           />
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="block text-[10px] font-medium text-content-tertiary mb-1 uppercase tracking-wider">Start</label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-[10px] font-medium text-content-tertiary uppercase tracking-wider">Start</label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newOn = !startTimeOn;
+                    setStartTimeOn(newOn);
+                    if (!newOn && editStartDate) {
+                      setEditStartDate(editStartDate.slice(0, 10));
+                    } else if (newOn && editStartDate) {
+                      setEditStartDate(editStartDate + 'T09:00');
+                    }
+                  }}
+                  className={`text-[9px] font-medium px-1 py-0.5 rounded transition-colors ${
+                    startTimeOn
+                      ? 'text-accent-violet bg-accent-violet/10'
+                      : 'text-content-tertiary hover:text-content-secondary'
+                  }`}
+                >
+                  {startTimeOn ? 'Has time' : '+ Time'}
+                </button>
+              </div>
               <input
-                type="datetime-local"
+                type={startTimeOn ? 'datetime-local' : 'date'}
                 value={editStartDate}
                 onChange={(e) => setEditStartDate(e.target.value)}
                 className="w-full px-2 py-1.5 bg-surface-tertiary border border-border rounded-md text-content-primary text-xs focus:outline-none focus:ring-2 focus:ring-accent-violet/50 transition-colors"
               />
             </div>
             <div>
-              <label className="block text-[10px] font-medium text-content-tertiary mb-1 uppercase tracking-wider">Due</label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-[10px] font-medium text-content-tertiary uppercase tracking-wider">Due</label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newOn = !dueTimeOn;
+                    setDueTimeOn(newOn);
+                    if (!newOn && editDueDate) {
+                      setEditDueDate(editDueDate.slice(0, 10));
+                    } else if (newOn && editDueDate) {
+                      setEditDueDate(editDueDate + 'T17:00');
+                    }
+                  }}
+                  className={`text-[9px] font-medium px-1 py-0.5 rounded transition-colors ${
+                    dueTimeOn
+                      ? 'text-accent-violet bg-accent-violet/10'
+                      : 'text-content-tertiary hover:text-content-secondary'
+                  }`}
+                >
+                  {dueTimeOn ? 'Has time' : '+ Time'}
+                </button>
+              </div>
               <input
-                type="datetime-local"
+                type={dueTimeOn ? 'datetime-local' : 'date'}
                 value={editDueDate}
                 onChange={(e) => setEditDueDate(e.target.value)}
                 className="w-full px-2 py-1.5 bg-surface-tertiary border border-border rounded-md text-content-primary text-xs focus:outline-none focus:ring-2 focus:ring-accent-violet/50 transition-colors"

@@ -41,9 +41,32 @@ export function toInputDatetime(dateStr) {
   return format(date, "yyyy-MM-dd'T'HH:mm");
 }
 
+export function toInputDate(dateStr) {
+  if (!dateStr) return '';
+  if (isDateOnly(dateStr)) return dateStr;
+  const date = typeof dateStr === 'string' ? parseISO(dateStr) : dateStr;
+  return format(date, 'yyyy-MM-dd');
+}
+
 export function fromInputDatetime(inputValue) {
   if (!inputValue) return null;
   return new Date(inputValue).toISOString();
+}
+
+export function fromInputDate(inputValue) {
+  if (!inputValue) return null;
+  return inputValue; // Store as 'YYYY-MM-DD' string — no time component
+}
+
+export function isDateOnly(dateStr) {
+  if (!dateStr) return false;
+  // Date-only values are stored as 'YYYY-MM-DD' (10 chars, no 'T')
+  return typeof dateStr === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateStr);
+}
+
+export function hasTime(dateStr) {
+  if (!dateStr) return false;
+  return !isDateOnly(dateStr);
 }
 
 export function isThisWeek(dateStr) {
