@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Calendar, List, Plus, FolderKanban, ChevronLeft, Sparkles } from 'lucide-react';
+import { LayoutDashboard, Calendar, List, Plus, FolderKanban, Columns3, ChevronLeft, Sparkles } from 'lucide-react';
 import useProjectStore from '../../stores/useProjectStore';
 import useUIStore from '../../stores/useUIStore';
 import ProjectForm from '../projects/ProjectForm';
@@ -51,6 +51,17 @@ export default function Sidebar() {
             >
               <LayoutDashboard size={18} />
               Dashboard
+            </Link>
+            <Link
+              to="/board"
+              className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                isActive('/board')
+                  ? 'bg-accent-violet/10 text-accent-violet'
+                  : 'text-content-secondary hover:text-content-primary hover:bg-surface-tertiary'
+              }`}
+            >
+              <Columns3 size={18} />
+              Board
             </Link>
             <Link
               to="/list"

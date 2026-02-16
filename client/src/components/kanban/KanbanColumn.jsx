@@ -4,7 +4,7 @@ import KanbanCard from './KanbanCard';
 import { STATUS_COLORS } from '../../utils/constants';
 import clsx from 'clsx';
 
-export default function KanbanColumn({ status, label, tasks, projectColor, onAddTask }) {
+export default function KanbanColumn({ status, label, tasks, projectColor, getProjectColor, onAddTask }) {
   const colors = STATUS_COLORS[status];
 
   return (
@@ -39,7 +39,7 @@ export default function KanbanColumn({ status, label, tasks, projectColor, onAdd
                 key={task.id}
                 task={task}
                 index={index}
-                projectColor={projectColor}
+                projectColor={getProjectColor ? getProjectColor(task) : projectColor}
               />
             ))}
             {provided.placeholder}

@@ -99,7 +99,7 @@ const useTaskStore = create((set, get) => ({
 
   getTasksByStatus: (projectId, status) =>
     get()
-      .tasks.filter((t) => t.projectId === projectId && t.status === status)
+      .tasks.filter((t) => (projectId ? t.projectId === projectId : t.status !== 'archived') && t.status === status)
       .sort((a, b) => (a.order || 0) - (b.order || 0)),
 
   // Subtasks

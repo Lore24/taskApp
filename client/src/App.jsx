@@ -5,6 +5,7 @@ import DashboardPage from './pages/DashboardPage';
 import ProjectPage from './pages/ProjectPage';
 import CalendarPage from './pages/CalendarPage';
 import ListPage from './pages/ListPage';
+import KanbanPage from './pages/KanbanPage';
 import useUIStore from './stores/useUIStore';
 
 export default function App() {
@@ -25,6 +26,7 @@ export default function App() {
         <Route element={<Layout />}>
           <Route path="/" element={<DashboardPage />} />
           <Route path="/project/:projectId" element={<ProjectPage />} />
+          <Route path="/board" element={<KanbanPage />} />
           <Route path="/calendar" element={<CalendarPage />} />
           <Route path="/list" element={<ListPage />} />
         </Route>

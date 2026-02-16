@@ -1,17 +1,17 @@
 import { useEffect, useState } from 'react';
 import { Plus } from 'lucide-react';
 import Header from '../components/layout/Header';
-import CalendarView from '../components/calendar/CalendarView';
+import KanbanBoard from '../components/kanban/KanbanBoard';
 import TaskDetailPanel from '../components/tasks/TaskDetailPanel';
 import TaskForm from '../components/tasks/TaskForm';
 import useProjectStore from '../stores/useProjectStore';
 import useTaskStore from '../stores/useTaskStore';
 
-export default function CalendarPage() {
+export default function KanbanPage() {
   const { projects, fetchProjects } = useProjectStore();
-  const { tasks, subtasks, fetchAllTasks, fetchAllSubtasks } = useTaskStore();
+  const { fetchAllTasks, fetchAllSubtasks } = useTaskStore();
   const [showTaskForm, setShowTaskForm] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [defaultStatus, setDefaultStatus] = useState('todo');
 
   useEffect(() => {
     fetchProjects();
@@ -19,19 +19,19 @@ export default function CalendarPage() {
     fetchAllSubtasks();
   }, []);
 
-  const handleDateSelect = (dateStr) => {
-    setSelectedDate(dateStr);
+  const handleAddTask = (status) => {
+    setDefaultStatus(status);
     setShowTaskForm(true);
   };
 
   return (
     <div className="min-h-screen">
       <Header
-        title="Calendar"
+        title="Board"
         subtitle="All tasks across projects"
         actions={
           <button
-            onClick={() => { setSelectedDate(null); setShowTaskForm(true); }}
+            onClick={() => { setDefaultStatus('todo'); setShowTaskForm(true); }}
             className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-white bg-accent-violet hover:bg-accent-violet/80 transition-colors"
           >
             <Plus size={16} />
@@ -39,17 +39,18 @@ export default function CalendarPage() {
           </button>
         }
       />
-      <CalendarView
-        tasks={tasks.filter((t) => t.status !== 'archived')}
-        subtasks={subtasks}
-        projects={projects}
-        onDateSelect={handleDateSelect}
-      />
+      <div className="pt-4">
+        <KanbanBoard
+          projectId={null}
+          projects={projects}
+          onAddTask={handleAddTask}
+        />
+      </div>
       <TaskForm
         isOpen={showTaskForm}
         onClose={() => setShowTaskForm(false)}
         projects={projects}
-        defaultDate={selectedDate}
+        defaultStatus={defaultStatus}
       />
       <TaskDetailPanel />
     </div>

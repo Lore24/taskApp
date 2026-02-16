@@ -3,8 +3,17 @@ import KanbanColumn from './KanbanColumn';
 import useTaskStore from '../../stores/useTaskStore';
 import { KANBAN_COLUMNS } from '../../utils/constants';
 
-export default function KanbanBoard({ projectId, projectColor, onAddTask }) {
+export default function KanbanBoard({ projectId, projectColor, onAddTask, projects }) {
   const { getTasksByStatus, reorderTasks, tasks } = useTaskStore();
+
+  const getProjectColor = (task) => {
+    if (projectColor) return projectColor;
+    if (projects) {
+      const proj = projects.find((p) => p.id === task.projectId);
+      return proj?.color || '#8B5CF6';
+    }
+    return '#8B5CF6';
+  };
 
   const handleDragEnd = (result) => {
     const { destination, source, draggableId } = result;
@@ -12,11 +21,13 @@ export default function KanbanBoard({ projectId, projectColor, onAddTask }) {
     if (!destination) return;
     if (destination.droppableId === source.droppableId && destination.index === source.index) return;
 
-    const projectTasks = tasks.filter((t) => t.projectId === projectId);
+    const scopedTasks = projectId
+      ? tasks.filter((t) => t.projectId === projectId)
+      : tasks.filter((t) => t.status !== 'archived');
 
     if (destination.droppableId === source.droppableId) {
       // Reorder within same column
-      const columnTasks = projectTasks
+      const columnTasks = scopedTasks
         .filter((t) => t.status === source.droppableId)
         .sort((a, b) => (a.order || 0) - (b.order || 0));
 
@@ -31,11 +42,11 @@ export default function KanbanBoard({ projectId, projectColor, onAddTask }) {
       reorderTasks(updates);
     } else {
       // Move to different column
-      const sourceColumn = projectTasks
+      const sourceColumn = scopedTasks
         .filter((t) => t.status === source.droppableId)
         .sort((a, b) => (a.order || 0) - (b.order || 0));
 
-      const destColumn = projectTasks
+      const destColumn = scopedTasks
         .filter((t) => t.status === destination.droppableId)
         .sort((a, b) => (a.order || 0) - (b.order || 0));
 
@@ -61,6 +72,7 @@ export default function KanbanBoard({ projectId, projectColor, onAddTask }) {
             label={col.label}
             tasks={getTasksByStatus(projectId, col.id)}
             projectColor={projectColor}
+            getProjectColor={!projectColor ? getProjectColor : undefined}
             onAddTask={onAddTask}
           />
         ))}

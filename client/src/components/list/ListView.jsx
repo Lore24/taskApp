@@ -3,7 +3,7 @@ import ListTaskRow from './ListTaskRow';
 import EmptyState from '../shared/EmptyState';
 import { matchesDateFilter } from '../../utils/dateHelpers';
 
-export default function ListView({ tasks, subtasks, projects, filter }) {
+export default function ListView({ tasks, subtasks, projects, filter, showSubtasks = true }) {
   const hasResults = projects.some((project) => {
     const projectTasks = tasks
       .filter((t) => t.projectId === project.id)
@@ -57,7 +57,7 @@ export default function ListView({ tasks, subtasks, projects, filter }) {
                 <ListTaskRow
                   key={task.id}
                   task={task}
-                  subtasks={subtasks.filter((s) => s.taskId === task.id)}
+                  subtasks={showSubtasks ? subtasks.filter((s) => s.taskId === task.id) : []}
                   projectColor={project.color}
                 />
               ))}
